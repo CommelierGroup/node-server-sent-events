@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SSE TEST!</title>
+</head>
+<body>
+<section>
+  <header>from server</header>
+  <ul id="list" style="max-height: 500px; overflow-y: auto; border: 1px solid black;"></ul>
+</section>
+<script>
+  (function() {
+    const eventSource = new EventSource('//localhost:8888/events', {
+      withCredentials: true
+    })
+    /**
+     * 서버로부터 event 를 수신
+     * @param {{ data: string }} event
+     */
+    eventSource.onmessage = function(event) {
+      console.log(event)
+      const ulElement = document.querySelector('#list')
+      const liElement = document.createElement('li')
+      liElement.textContent = event.data
+      ulElement.appendChild(liElement)
+      ulElement.scrollTop = ulElement.scrollHeight
+    }
+  })()
+</script>
+</body>
+</html>
