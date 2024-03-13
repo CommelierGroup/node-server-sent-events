@@ -4,11 +4,10 @@ import * as path from 'node:path'
 
 const serverOptions = {
   key: fs.readFileSync(path.join(import.meta.dirname, 'privkey.pem')),
-  cert: fs.readFileSync(path.join(import.meta.dirname, 'cert.pem'))
+  cert: fs.readFileSync(path.join(import.meta.dirname, 'cert.pem')),
 }
 
 const server = http2.createSecureServer(serverOptions)
-const html = fs.readFileSync(path.join(import.meta.dirname, 'index.html'))
 
 server.on('error', err => console.error(err))
 
@@ -45,16 +44,14 @@ server.on('stream', (stream, headers) => {
 
       break
     case '/':
-      stream.respond({
-        'content-type': 'text/html;charset=utf-8',
-        ':status': 200
+      stream.respondWithFile(path.join(import.meta.dirname, 'index.html'), {
+        'content-type': 'text/html',
       })
-      stream.end(html)
       break
     default:
       stream.respond({
         'content-type': 'text/html;charset=utf-8',
-        ':status': 404
+        ':status': 404,
       })
       stream.end('<h1>404 NOT FOUND</h1>')
       break
